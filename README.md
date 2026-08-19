@@ -9,10 +9,18 @@ your data stays local, on your machine.
 
 ## Quick start — one command
 
-> Requires [Node.js 20+](https://nodejs.org) and git.
+> Requires [Node.js 20+](https://nodejs.org) and [git](https://git-scm.com).
+
+**macOS / Linux** (in a terminal):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/install.sh | bash
+```
+
+**Windows** (in PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/install.ps1 | iex
 ```
 
 That's it. The script installs SDNLog into `~/.sdnlog`, builds it, starts it,
@@ -22,13 +30,19 @@ and opens **http://localhost:3456** in your browser.
 (re)starts the app. Your journal data is kept in `~/.sdnlog/data`, outside the
 app itself, so updates never touch it.
 
-Manage the app after installing:
+Manage the app after installing — macOS/Linux:
 
 ```bash
 bash ~/.sdnlog/app/install.sh status     # is it running?
 bash ~/.sdnlog/app/install.sh stop       # stop it
 bash ~/.sdnlog/app/install.sh logs       # follow server logs
 bash ~/.sdnlog/app/install.sh uninstall  # remove the app (keeps your data)
+```
+
+Windows (same subcommands):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.sdnlog\app\install.ps1" status
 ```
 
 Options via environment variables: `SDNLOG_PORT` (default `3456`),
@@ -67,7 +81,8 @@ SQLite database is created automatically at `data/journal.db` on first run
 - `src/lib/dates.ts` — date helpers (week/month ranges, formatting).
 - `src/app/*` — Today, History, Search, and Summary pages.
 - `src/components/*` — entry form/list/row, nav bar, date picker, search box.
-- `install.sh` — one-command installer/updater/launcher (see Quick start).
+- `install.sh` / `install.ps1` — one-command installer/updater/launcher for
+  macOS/Linux and Windows (see Quick start).
 
 ## License
 
