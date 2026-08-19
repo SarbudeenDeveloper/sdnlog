@@ -140,15 +140,15 @@ function Install-SDNLog {
   if (-not (Get-Command curl.exe -ErrorAction SilentlyContinue)) { Fail "curl.exe is required (it ships with Windows 10 and later)." }
 
   $nodeMajor = [int]((& node -v).TrimStart("v").Split(".")[0])
-  if ($nodeMajor -lt 20) {
-    $manual = "Node.js 20 or newer is required (found $(& node -v)). Update it from https://nodejs.org and re-run this command."
+  if ($nodeMajor -lt 22) {
+    $manual = "Node.js 22 or newer is required (found $(& node -v)). Update it from https://nodejs.org and re-run this command."
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) { Fail $manual }
-    if (-not (Confirm-Install "Node.js $(& node -v) is too old (need 20+). Update it now with winget?")) { Fail $manual }
+    if (-not (Confirm-Install "Node.js $(& node -v) is too old (need 22+). Update it now with winget?")) { Fail $manual }
     Info "Updating Node.js via winget (this can take a few minutes)..."
     & winget install --id OpenJS.NodeJS.LTS -e --source winget --accept-source-agreements --accept-package-agreements
     Update-PathFromRegistry
     $nodeMajor = [int]((& node -v).TrimStart("v").Split(".")[0])
-    if ($nodeMajor -lt 20) {
+    if ($nodeMajor -lt 22) {
       Fail "Node.js is still $(& node -v) in this window. Open a NEW PowerShell window and re-run the install command."
     }
     Ok "Node.js updated to $(& node -v)."

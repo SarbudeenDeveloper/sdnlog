@@ -111,10 +111,10 @@ esac
 # ---------------------------------------------------------------- prerequisites
 command -v git  >/dev/null 2>&1 || die "git is required. Install it from https://git-scm.com and re-run."
 command -v curl >/dev/null 2>&1 || die "curl is required."
-command -v node >/dev/null 2>&1 || die "Node.js 20+ is required. Install it from https://nodejs.org and re-run."
+command -v node >/dev/null 2>&1 || die "Node.js 22+ is required. Install it from https://nodejs.org and re-run."
 command -v npm  >/dev/null 2>&1 || die "npm is required (it ships with Node.js)."
-node -e 'process.exit(parseInt(process.versions.node) >= 20 ? 0 : 1)' \
-  || die "Node.js 20 or newer is required (found $(node -v)). Update it from https://nodejs.org and re-run."
+node -e 'process.exit(parseInt(process.versions.node) >= 22 ? 0 : 1)' \
+  || die "Node.js 22 or newer is required (found $(node -v)). Update it from https://nodejs.org and re-run."
 
 mkdir -p "$ROOT" "$SDNLOG_DATA_DIR"
 printf '%s' "$PORT" >"$ROOT/.port"

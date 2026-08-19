@@ -10,15 +10,13 @@
     "release": "next build && rm -rf prebuilt && mkdir -p prebuilt && cp -R .next prebuilt/.next && rm -rf prebuilt/.next/cache prebuilt/.next/dev prebuilt/.next/trace prebuilt/.next/diagnostics && node scripts/prepare-prebuilt.js"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^9.6.0",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
