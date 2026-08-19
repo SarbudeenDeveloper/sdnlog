@@ -4,11 +4,11 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/install.sh | bash
 #
-# First run:  clones the app into ~/.sdnlog, installs dependencies, builds,
-#             and starts it at http://localhost:3456.
-# Re-running: checks GitHub for updates — if there are new commits it pulls,
-#             rebuilds, and restarts; otherwise it just makes sure the app
-#             is running.
+# First run:  clones the app into ~/.sdnlog, installs dependencies, and starts
+#             it at http://localhost:3456. The repo ships a prebuilt app
+#             (prebuilt/.next), so no build runs on your machine.
+# Re-running: checks GitHub for updates — if there are new commits it pulls
+#             and restarts; otherwise it just makes sure the app is running.
 #
 # Configuration (environment variables):
 #   SDNLOG_PORT      port to serve on             (default: 3456)
@@ -141,18 +141,26 @@ else
   fi
 fi
 
-# ------------------------------------------------------- install deps & build
+# ----------------------------------------------- install deps & deploy prebuilt
 current_rev="$(git -C "$APP_DIR" rev-parse HEAD)"
 built_rev="$(cat "$BUILT_FILE" 2>/dev/null || true)"
 needs_restart=0
 if [ "$current_rev" != "$built_rev" ] || [ ! -f "$APP_DIR/.next/BUILD_ID" ]; then
   info "Installing dependencies (this can take a minute)..."
   (cd "$APP_DIR" && npm ci --no-audit --no-fund --loglevel=error)
-  info "Building the app..."
-  (cd "$APP_DIR" && npm run build >"$ROOT/build.log" 2>&1) \
-    || die "Build failed — see $ROOT/build.log"
+  if [ -f "$APP_DIR/prebuilt/.next/BUILD_ID" ]; then
+    # The repo ships the built app — deploy it instead of building here.
+    info "Deploying the prebuilt app..."
+    rm -rf "$APP_DIR/.next"
+    cp -R "$APP_DIR/prebuilt/.next" "$APP_DIR/.next"
+    (cd "$APP_DIR" && node scripts/restore-prebuilt-links.js) || die "Could not restore prebuilt links."
+  else
+    info "No prebuilt app in this checkout — building (one-time)..."
+    (cd "$APP_DIR" && npm run build >"$ROOT/build.log" 2>&1) \
+      || die "Build failed — see $ROOT/build.log"
+  fi
   printf '%s' "$current_rev" >"$BUILT_FILE"
-  ok "Build complete."
+  ok "Ready to run."
   needs_restart=1
 fi
 

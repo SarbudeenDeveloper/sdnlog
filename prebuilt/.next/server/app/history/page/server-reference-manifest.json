@@ -1,0 +1,27 @@
+{
+  "node": {
+    "6069b4c6889746ef7daccd8962036953e47f1c653a": {
+      "workers": {
+        "app/history/page": {
+          "moduleId": 56582,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "updateEntry",
+      "filename": "src/lib/actions.ts"
+    },
+    "40a384e53220b91d7724f9ab7f49afded40d5b6fd4": {
+      "workers": {
+        "app/history/page": {
+          "moduleId": 56582,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deleteEntry",
+      "filename": "src/lib/actions.ts"
+    }
+  },
+  "edge": {}
+}

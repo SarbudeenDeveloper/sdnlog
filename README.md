@@ -25,8 +25,9 @@ curl -fsSL https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/inst
 irm https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/install.ps1 | iex
 ```
 
-That's it. The script installs SDNLog into `~/.sdnlog`, builds it, starts it,
-and opens **http://localhost:3456** in your browser.
+That's it. The script installs SDNLog into `~/.sdnlog` and starts it at
+**http://localhost:3456**. The repo ships a prebuilt app (`prebuilt/.next`),
+so nothing is compiled on your machine — install is download + dependencies.
 
 **Re-run the same command anytime** — it checks for updates, applies them, and
 (re)starts the app. Your journal data is kept in `~/.sdnlog/data`, outside the
@@ -73,6 +74,14 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) to start journaling. The
 SQLite database is created automatically at `data/journal.db` on first run
 (or at `$SDNLOG_DATA_DIR` if that variable is set).
+
+**Before pushing app changes**, refresh the prebuilt bundle that installs
+run — build it and commit the result:
+
+```bash
+npm run release
+git add prebuilt && git commit -m "Refresh prebuilt app"
+```
 
 ## Project structure
 

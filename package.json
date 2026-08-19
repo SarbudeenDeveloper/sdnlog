@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "release": "next build && rm -rf prebuilt && mkdir -p prebuilt && cp -R .next prebuilt/.next && rm -rf prebuilt/.next/cache prebuilt/.next/dev prebuilt/.next/trace prebuilt/.next/diagnostics && node scripts/prepare-prebuilt.js"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
