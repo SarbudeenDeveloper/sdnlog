@@ -2,7 +2,7 @@
 #
 # SDNLog — install, update, and run in one command:
 #
-#   curl -fsSL https://raw.githubusercontent.com/OWNER/REPO/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/install.sh | bash
 #
 # First run:  clones the app into ~/.sdnlog, installs dependencies, builds,
 #             and starts it at http://localhost:3456.
@@ -22,7 +22,7 @@
 
 set -euo pipefail
 
-REPO_URL="${SDNLOG_REPO:-https://github.com/OWNER/REPO.git}"
+REPO_URL="${SDNLOG_REPO:-https://github.com/SarbudeenDeveloper/sdnlog.git}"
 BRANCH="${SDNLOG_BRANCH:-main}"
 ROOT="${SDNLOG_HOME:-$HOME/.sdnlog}"
 APP_DIR="$ROOT/app"

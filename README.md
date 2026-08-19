@@ -12,7 +12,7 @@ your data stays local, on your machine.
 > Requires [Node.js 20+](https://nodejs.org) and git.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OWNER/REPO/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/SarbudeenDeveloper/sdnlog/main/install.sh | bash
 ```
 
 That's it. The script installs SDNLog into `~/.sdnlog`, builds it, starts it,
@@ -48,8 +48,8 @@ Options via environment variables: `SDNLOG_PORT` (default `3456`),
 ## Developing from source
 
 ```bash
-git clone https://github.com/OWNER/REPO.git
-cd REPO
+git clone https://github.com/SarbudeenDeveloper/sdnlog.git
+cd sdnlog
 npm install
 npm run dev
 ```
