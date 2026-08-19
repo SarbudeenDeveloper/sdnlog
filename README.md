@@ -10,6 +10,8 @@ your data stays local, on your machine.
 ## Quick start — one command
 
 > Requires [Node.js 20+](https://nodejs.org) and [git](https://git-scm.com).
+> On Windows, the installer offers to install missing ones automatically via
+> winget (set `SDNLOG_AUTO_INSTALL=1` to skip the prompt).
 
 **macOS / Linux** (in a terminal):
 

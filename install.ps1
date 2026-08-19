@@ -14,6 +14,8 @@
 #   SDNLOG_DATA_DIR  where the SQLite db lives    (default: %SDNLOG_HOME%\data)
 #   SDNLOG_BRANCH    branch to track              (default: main)
 #   SDNLOG_NO_OPEN   set to 1 to skip opening the browser
+#   SDNLOG_AUTO_INSTALL  set to 1 to install missing git/Node.js via winget
+#                        without prompting
 #
 # Local subcommands (after install):
 #   powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.sdnlog\app\install.ps1" stop
@@ -71,6 +73,34 @@ function Stop-Server {
   Remove-Item $PidFile -ErrorAction SilentlyContinue
 }
 
+function Confirm-Install([string]$What) {
+  # SDNLOG_AUTO_INSTALL=1 skips the prompt (for unattended installs).
+  if ($env:SDNLOG_AUTO_INSTALL -eq "1") { return $true }
+  $a = Read-Host "$What [Y/n]"
+  return -not ($a -and $a.Trim().ToLower().StartsWith("n"))
+}
+
+function Update-PathFromRegistry {
+  # A winget install updates the registry PATH, not this session's - pick it up.
+  $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+              [Environment]::GetEnvironmentVariable("Path", "User")
+}
+
+function Ensure-Tool([string]$Name, [string]$WingetId, [string]$Url) {
+  if (Get-Command $Name -ErrorAction SilentlyContinue) { return }
+  $manual = "$Name is required. Install it from $Url and re-run this command."
+  if (-not (Get-Command winget -ErrorAction SilentlyContinue)) { Fail $manual }
+  if (-not (Confirm-Install "$Name is required but not installed. Install it now with winget?")) { Fail $manual }
+  Info "Installing $Name via winget (this can take a few minutes)..."
+  & winget install --id $WingetId -e --source winget --accept-source-agreements --accept-package-agreements
+  if ($LASTEXITCODE -ne 0) { Fail "winget could not install $Name. $manual" }
+  Update-PathFromRegistry
+  if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
+    Fail "$Name was installed, but this window's PATH is stale. Open a NEW PowerShell window and re-run the install command."
+  }
+  Ok "$Name installed."
+}
+
 switch ($Command) {
   "stop" {
     Stop-Server; Ok "SDNLog stopped."; exit 0
@@ -98,12 +128,28 @@ switch ($Command) {
 }
 
 # ---------------------------------------------------------------- prerequisites
-if (-not (Get-Command git -ErrorAction SilentlyContinue))      { Fail "git is required. Install it from https://git-scm.com and re-run." }
-if (-not (Get-Command node -ErrorAction SilentlyContinue))     { Fail "Node.js 20+ is required. Install it from https://nodejs.org and re-run." }
-if (-not (Get-Command npm -ErrorAction SilentlyContinue))      { Fail "npm is required (it ships with Node.js)." }
+# Missing git/Node.js are offered for automatic install via winget (Windows 10/11).
+Ensure-Tool "git"  "Git.Git"          "https://git-scm.com"
+Ensure-Tool "node" "OpenJS.NodeJS.LTS" "https://nodejs.org"
 if (-not (Get-Command curl.exe -ErrorAction SilentlyContinue)) { Fail "curl.exe is required (it ships with Windows 10 and later)." }
+
 $nodeMajor = [int]((& node -v).TrimStart("v").Split(".")[0])
-if ($nodeMajor -lt 20) { Fail "Node.js 20 or newer is required (found $(& node -v)). Update it from https://nodejs.org and re-run." }
+if ($nodeMajor -lt 20) {
+  $manual = "Node.js 20 or newer is required (found $(& node -v)). Update it from https://nodejs.org and re-run this command."
+  if (-not (Get-Command winget -ErrorAction SilentlyContinue)) { Fail $manual }
+  if (-not (Confirm-Install "Node.js $(& node -v) is too old (need 20+). Update it now with winget?")) { Fail $manual }
+  Info "Updating Node.js via winget (this can take a few minutes)..."
+  & winget install --id OpenJS.NodeJS.LTS -e --source winget --accept-source-agreements --accept-package-agreements
+  Update-PathFromRegistry
+  $nodeMajor = [int]((& node -v).TrimStart("v").Split(".")[0])
+  if ($nodeMajor -lt 20) {
+    Fail "Node.js is still $(& node -v) in this window. Open a NEW PowerShell window and re-run the install command."
+  }
+  Ok "Node.js updated to $(& node -v)."
+}
+if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+  Fail "npm was not found (it ships with Node.js). Open a NEW PowerShell window and re-run the install command."
+}
 
 New-Item -ItemType Directory -Force -Path $Root, $DataDir | Out-Null
 Set-Content -Path $PortFile -Value $Port
